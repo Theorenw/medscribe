@@ -82,11 +82,12 @@ Important: Do not wrap the output in code blocks or backticks. Return only raw J
     });
 
     const output = completion.data.choices[0].message.content;
-    res.json({ output });
+    console.log("GPT response", output);
+    res.json({ message: response.data.choices[0].message.content });
 
   } catch (err) {
     console.error('Error with GPT API:', err);
-    res.status(500).json({ error: 'Something went wrong when processing the note.' });
+    res.status(500).json({ error: 'Something went wrong on the server.' });
   }
 });
 
