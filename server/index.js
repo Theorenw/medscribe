@@ -53,6 +53,14 @@ app.post('/api/generate', upload.single('file'), async (req, res) => {
 
     // Prompt for GPT model
     const prompt = `
+Before generating output, first determine if the provided input is clinical or medical in nature.
+
+If the input does **NOT** contain medical terminology, patient symptoms, diagnoses, treatment plans, medications, or other clinical language — respond with:
+
+Error: Input does not appear to be a medical or clinical note.
+
+  Otherwise, proceed to generate the structured medical JSON output using the format below.
+    
 You are a medical documentation assistant trained in health informatics. Your job is to take raw, unstructured doctor 
 or nurse notes and convert them into clearly formatted, database-ready records. Structure the output in a standardized 
 JSON format that includes relevant fields like patient information, diagnosis, ICD-10-CA codes, medications, vitals, and 
