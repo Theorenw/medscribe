@@ -11,6 +11,9 @@ function App() {
   const [result, setResult] = useState('');
   // State for error
   const [error, setError] = useState('');
+  // State for loading animation
+  const [loading, setLoading] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +23,7 @@ function App() {
     formData.append('note', note);
     if (file) formData.append('file', file);
 
+    setLoading(true);
     try {
       // Send to backend
       const res = await axios.post('/api/generate', formData, {
@@ -37,6 +41,8 @@ function App() {
     } catch (err) {
       setResult('');
       setError('There was an error processing your note.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,6 +127,13 @@ function App() {
             >
               Copy to Clipboard
             </button>
+          </div>
+        </div>
+      )}
+      {loading && (
+        <div className="d-flex justify-content-center align-items-center mt-4">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Processing...</span>
           </div>
         </div>
       )}
