@@ -26,9 +26,12 @@ function App() {
     setLoading(true);
     try {
       // Send to backend
-      const res = await axios.post('/api/generate', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/generate`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      
       // Returned result
       setResult(res.data.message || res.data.output);
       setError(''); // Clear any previous errors
