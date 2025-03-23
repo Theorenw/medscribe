@@ -1,5 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const multer = require('multer');
+const pdfParse = require('pdf-parse');
+const fs = require('fs');
+const path = require('path');
 const { Configuration, OpenAIApi } = require('openai');
 require('dotenv').config();
 
@@ -13,15 +17,40 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-// GPT processing endpoint
-app.post('/api/generate', async (req, res) => {
-  const userNote = req.body.note;
+// File upload setup
+const upload = multer({ dest: 'uploads/' });
 
-  if (!userNote) {
-    return res.status(400).json({ error: 'No note provided' });
-  }
+app.post('/api/generate', upload.single('file'), async (req, res) => {
+  let extractedText = '';
+  const noteText = req.body.note || '';
 
   try {
+    if (req.file) {
+      const filePath = path.join(__dirname, req.file.path);
+
+      // If uploaded file is PDF
+      if (req.file.mimetype === 'application/pdf') {
+        const dataBuffer = fs.readFileSync(filePath);
+        const parsed = await pdfParse(dataBuffer);
+        extractedText = parsed.text;
+      }
+      // If uploaded file is TXT
+      else if (req.file.mimetype === 'text/plain') {
+        extractedText = fs.readFileSync(filePath, 'utf8');
+      } else {
+        return res.status(400).json({ error: 'Unsupported file type' });
+      }
+
+      // Delete the uploaded file afterward
+      fs.unlinkSync(filePath);
+    }
+
+    const finalNote = extractedText || noteText;
+
+    if (!finalNote) {
+      return res.status(400).json({ error: 'No note or file provided' });
+    }
+
     // Prompt for GPT model
     const prompt = `
 You are a medical documentation assistant trained in health informatics. Your job is to take raw, unstructured doctor 
@@ -36,7 +65,7 @@ Respond English, no extra commentary.
 `;
 
     const completion = await openai.createChatCompletion({
-      model: 'gpt-4', // Using GPT-4
+      model: 'gpt-3.5-turbo', // Using gpt-4 final, gpt-3.5-turbo for testing
       messages: [
         { role: 'system', content: 'You are a helpful medical coding assistant.' },
         { role: 'user', content: prompt },
