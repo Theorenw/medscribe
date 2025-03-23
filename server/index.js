@@ -59,7 +59,7 @@ JSON format that includes relevant fields like patient information, diagnosis, I
 treatment plan. The output must be HL7-compliant in style and format. Expand shorthand, clarify abbreviations, and ensure 
 clinical accuracy while preserving the original intent of the note.
 
-Note: "${userNote}"
+Note: "${finalNote}"
 
 Respond English, no extra commentary.
 `;
