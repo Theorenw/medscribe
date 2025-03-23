@@ -78,6 +78,30 @@ function App() {
         <div className="mt-4">
           <h5>Processed Output:</h5>
           <pre>{result}</pre>
+
+          {/* Button to download json */}
+          <button
+            className="btn btn-success mt-2 me-2"
+            onClick={() => {
+              const cleanResult = result
+                .replace(/```json\n?/, '')   // Remove starting ```json
+                .replace(/```$/, '');        // Remove ending ```
+            
+              const blob = new Blob(
+                [JSON.stringify(JSON.parse(cleanResult), null, 2)],
+                { type: 'application/json' }
+              );
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'medscribe_output.json';
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            
+          >
+            Download JSON
+          </button>
         </div>
       )}
     </div>

@@ -62,6 +62,7 @@ clinical accuracy while preserving the original intent of the note.
 Note: "${finalNote}"
 
 Respond English, no extra commentary.
+Important: Do not wrap the output in code blocks or backticks. Return only raw JSON and NO non-whitespace characters.
 `;
 
     const completion = await openai.createChatCompletion({
