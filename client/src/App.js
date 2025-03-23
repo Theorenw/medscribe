@@ -33,8 +33,15 @@ function App() {
       );
       
       // Returned result
-      setResult(res.data.message || res.data.output);
-      setError(''); // Clear any previous errors
+      const resultText = res.data.message || res.data.output
+      setResult(resultText);
+
+      // Check if gpt signals result is not medical
+      if (resultText.Includes('Error: Input does not appear to be a medical or clinical note.')) {
+        setError('Non-medical input detected.')
+      } else {
+        setError(''); // Clear any previous errors
+      }
 
       // Clear the input field after submission
       document.getElementById('note').value = '';
