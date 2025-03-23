@@ -79,29 +79,45 @@ function App() {
           <h5>Processed Output:</h5>
           <pre>{result}</pre>
 
-          {/* Button to download json */}
-          <button
-            className="btn btn-success mt-2 me-2"
-            onClick={() => {
-              const cleanResult = result
-                .replace(/```json\n?/, '')   // Remove starting ```json
-                .replace(/```$/, '');        // Remove ending ```
-            
-              const blob = new Blob(
-                [JSON.stringify(JSON.parse(cleanResult), null, 2)],
-                { type: 'application/json' }
-              );
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'medscribe_output.json';
-              a.click();
-              URL.revokeObjectURL(url);
-            }}
-            
-          >
-            Download JSON
-          </button>
+          <div className="d-flex gap-2 mt-2">
+            {/* Button to download json */}
+            <button
+              className="btn btn-success"
+              onClick={() => {
+                const cleanResult = result
+                  .replace(/```json\n?/, '') // Remove starting ```json
+                  .replace(/```$/, '');      // Remove ending ```
+                const blob = new Blob(
+                  [JSON.stringify(JSON.parse(cleanResult), null, 2)],
+                  { type: 'application/json' }
+                );
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'medscribe_output.json';
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >
+              Download JSON
+            </button>
+
+            {/* Button to copy json */}
+            <button
+              className="btn btn-outline-secondary"
+              onClick={() => {
+                const cleanResult = result
+                  .replace(/```json\n?/, '') // Remove starting ```json
+                  .replace(/```$/, '');      // Remove ending ```
+                navigator.clipboard.writeText(
+                  JSON.stringify(JSON.parse(cleanResult), null, 2)
+                );
+                alert('JSON copied to clipboard');
+              }}
+            >
+              Copy to Clipboard
+            </button>
+          </div>
         </div>
       )}
     </div>
