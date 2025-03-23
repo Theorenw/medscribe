@@ -9,6 +9,8 @@ function App() {
   const [file, setFile] = useState(null);
   // State for GPT response
   const [result, setResult] = useState('');
+  // State for error
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,6 +27,7 @@ function App() {
       });
       // Returned result
       setResult(res.data.message || res.data.output);
+      setError(''); // Clear any previous errors
 
       // Clear the input field after submission
       document.getElementById('note').value = '';
@@ -32,7 +35,8 @@ function App() {
       setNote('');
       setFile(null);
     } catch (err) {
-      setResult('Error processing note.');
+      setResult('');
+      setError('There was an error processing your note.');
     }
   };
 
@@ -74,7 +78,7 @@ function App() {
       </form>
 
       {/* Output display after processing */}
-      {result && (
+      {result && !error && (
         <div className="mt-4">
           <h5>Processed Output:</h5>
           <pre>{result}</pre>
@@ -118,6 +122,11 @@ function App() {
               Copy to Clipboard
             </button>
           </div>
+        </div>
+      )}
+      {error && (
+        <div className="alert alert-danger mt-3" role="alert">
+          {error}
         </div>
       )}
     </div>
