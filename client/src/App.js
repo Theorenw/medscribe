@@ -13,6 +13,8 @@ function App() {
   const [error, setError] = useState('');
   // State for loading animation
   const [loading, setLoading] = useState(false);
+  // State to determine is AI returned non medical note
+  const [isMedicalOutput, setIsMedicalOutput] = useState(true);
 
   // Example note to show user
   const fillExampleNote = () => {
@@ -44,9 +46,16 @@ function App() {
       );
       
       // Returned result
-      setResult(res.data.message || res.data.output);
-      setError(''); // Clear any previous errors
-
+      const resultText = res.data.message || res.data.output;
+      setResult(resultText);
+      
+      // Check if note is medical
+      if (resultText.includes('Input does not appear to be a medical or clinical note')) {
+        setIsMedicalOutput(false);
+      } else {
+        setIsMedicalOutput(true);
+      }
+      
       // Clear the input field after submission
       document.getElementById('note').value = '';
       document.getElementById('file').value = null;
@@ -135,45 +144,47 @@ function App() {
             <h5 className="section-label">Processed Output:</h5>
             <pre>{result}</pre>
 
-            <div className="button-row">
-              {/* Button to download json */}
-              <button
-                className="btn btn-success"
-                onClick={() => {
-                  const cleanResult = result
-                    .replace(/```json\n?/, '') // Remove starting ```json
-                    .replace(/```$/, '');      // Remove ending ```
-                  const blob = new Blob(
-                    [JSON.stringify(JSON.parse(cleanResult), null, 2)],
-                    { type: 'application/json' }
-                  );
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = 'medscribe_output.json';
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >
-                Download JSON
-              </button>
+            {isMedicalOutput && (
+              <div className="button-row">
+                {/* Button to download json */}
+                <button
+                  className="btn btn-success"
+                  onClick={() => {
+                    const cleanResult = result
+                      .replace(/```json\n?/, '') // Remove starting ```json
+                      .replace(/```$/, '');      // Remove ending ```
+                    const blob = new Blob(
+                      [JSON.stringify(JSON.parse(cleanResult), null, 2)],
+                      { type: 'application/json' }
+                    );
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'medscribe_output.json';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Download JSON
+                </button>
 
-              {/* Button to copy json */}
-              <button
-                className="btn btn-outline-secondary"
-                onClick={() => {
-                  const cleanResult = result
-                    .replace(/```json\n?/, '') // Remove starting ```json
-                    .replace(/```$/, '');      // Remove ending ```
-                  navigator.clipboard.writeText(
-                    JSON.stringify(JSON.parse(cleanResult), null, 2)
-                  );
-                  alert('JSON copied to clipboard');
-                }}
-              >
-                Copy to Clipboard
-              </button>
-            </div>
+                {/* Button to copy json */}
+                <button
+                  className="btn btn-outline-secondary"
+                  onClick={() => {
+                    const cleanResult = result
+                      .replace(/```json\n?/, '') // Remove starting ```json
+                      .replace(/```$/, '');      // Remove ending ```
+                    navigator.clipboard.writeText(
+                      JSON.stringify(JSON.parse(cleanResult), null, 2)
+                    );
+                    alert('JSON copied to clipboard');
+                  }}
+                >
+                  Copy to Clipboard
+                </button>
+              </div>
+            )}
           </div>
         )}
         {loading && (
