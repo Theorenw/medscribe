@@ -70,6 +70,11 @@
   margin-top: 1rem;
 }
 
+.section-label-big {
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
 .page-container {
   max-width: 800px;
   margin: 0 auto;
@@ -111,6 +116,46 @@ textarea.form-control {
   background-color: #007b8a;
   border-bottom: 1px solid black;
 }
+
+.medical-color {
+  color: #007b8a !important;
+}
+
+.btn-medscribe {
+  background-color: #004d4d;
+  color: #fff;
+  border: none;
+}
+
+.btn-medscribe:hover {
+  background-color: #003737;
+}
+
+.custom-accordion .accordion-button {
+  background-color: #f0f8f9;
+  color: #007b8a;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.custom-accordion .accordion-button:not(.collapsed):hover,
+.custom-accordion .accordion-button:hover {
+  background-color: #e4f3f5;
+  color: #005f6b;
+}
+
+.custom-accordion .accordion-body {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.accordion-item {
+  border: 1px solid #dfe6e9;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+
 
 
 
