@@ -51,101 +51,138 @@ function App() {
 
   // Html
   return (
-    <div className="container mt-5">
-      <h1 className="text-center mb-4">MedScribe</h1>
-      {/* Text area for note */}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="note" className="form-label">Doctor's Note</label>
-          <textarea
-            id="note"
-            className="form-control"
-            rows="5"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Enter medical note here..."
-          ></textarea>
-        </div>
+    <>
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-dark mb-4">
+        <div className="container">
+          <span className="navbar-brand mb-0 h1">MedScribe</span>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
 
-        {/* File form input */}
-        <div className="mb-3">
-          <label htmlFor="file" className="form-label">Or Upload a File</label>
-          <input
-            type="file"
-            className="form-control"
-            id="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            accept=".txt,.pdf"
-          />
-        </div>
-        <div className="d-flex gap-2">
-          {/* Form submission buttom */}
-          <button type="submit" className="btn btn-primary">Submit</button>
-          {/* Clear output buttom */}
-          <button type="button" className="btn btn-secondary" onClick={() => setResult('')}>Clear Output</button>
-        </div>
-      </form>
-
-      {/* Output display after processing */}
-      {result && !error && (
-        <div className="mt-4">
-          <h5>Processed Output:</h5>
-          <pre>{result}</pre>
-
-          <div className="d-flex gap-2 mt-2">
-            {/* Button to download json */}
-            <button
-              className="btn btn-success"
-              onClick={() => {
-                const cleanResult = result
-                  .replace(/```json\n?/, '') // Remove starting ```json
-                  .replace(/```$/, '');      // Remove ending ```
-                const blob = new Blob(
-                  [JSON.stringify(JSON.parse(cleanResult), null, 2)],
-                  { type: 'application/json' }
-                );
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'medscribe_output.json';
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-            >
-              Download JSON
-            </button>
-
-            {/* Button to copy json */}
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() => {
-                const cleanResult = result
-                  .replace(/```json\n?/, '') // Remove starting ```json
-                  .replace(/```$/, '');      // Remove ending ```
-                navigator.clipboard.writeText(
-                  JSON.stringify(JSON.parse(cleanResult), null, 2)
-                );
-                alert('JSON copied to clipboard');
-              }}
-            >
-              Copy to Clipboard
-            </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ms-3">
+              <li className="nav-item">
+                <a className="nav-link active" href="#faq">FAQ</a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link active" href="#about">About</a>
+              </li>
+            </ul>
           </div>
         </div>
-      )}
-      {loading && (
-        <div className="d-flex justify-content-center align-items-center mt-4">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Processing...</span>
+      </nav>
+
+      {/* Body */}
+      <div className="page-container">
+        <h1 className="header-title">MedScribe</h1>
+        {/* Text area for note */}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="note" className="header-section">Doctor's Note</label>
+            <textarea
+              id="note"
+              className="form-control"
+              rows="5"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Enter medical note here..."
+            ></textarea>
           </div>
-        </div>
-      )}
-      {error && (
-        <div className="alert alert-danger mt-3" role="alert">
-          {error}
-        </div>
-      )}
-    </div>
+
+          {/* File form input */}
+          <div className="form-group">
+            <label htmlFor="file" className="header-section">Upload a File</label>
+            <input
+              type="file"
+              className="form-control"
+              id="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              accept=".txt"
+            />
+          </div>
+          <div className="button-row">
+            {/* Form submission buttom */}
+            <button type="submit" className="btn btn-success">Submit</button>
+            {/* Clear output buttom */}
+            <button type="button" className="btn btn-outline-secondary" onClick={() => setResult('')}>Clear Output</button>
+          </div>
+        </form>
+
+        {/* Output display after processing */}
+        {result && !error && (
+          <div className="output-card">
+            <h5 className="section-label">Processed Output:</h5>
+            <pre>{result}</pre>
+
+            <div className="button-row">
+              {/* Button to download json */}
+              <button
+                className="btn btn-success"
+                onClick={() => {
+                  const cleanResult = result
+                    .replace(/```json\n?/, '') // Remove starting ```json
+                    .replace(/```$/, '');      // Remove ending ```
+                  const blob = new Blob(
+                    [JSON.stringify(JSON.parse(cleanResult), null, 2)],
+                    { type: 'application/json' }
+                  );
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'medscribe_output.json';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                Download JSON
+              </button>
+
+              {/* Button to copy json */}
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => {
+                  const cleanResult = result
+                    .replace(/```json\n?/, '') // Remove starting ```json
+                    .replace(/```$/, '');      // Remove ending ```
+                  navigator.clipboard.writeText(
+                    JSON.stringify(JSON.parse(cleanResult), null, 2)
+                  );
+                  alert('JSON copied to clipboard');
+                }}
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        )}
+        {loading && (
+          <div className="d-flex justify-content-center align-items-center mt-4">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Processing...</span>
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {error}
+          </div>
+        )}
+      </div>
+      
+      {/* Footer */}
+      <footer className="footer">
+      <p>Made by Theoren & Khanh</p>
+    </footer>
+    </>
   );
 }
 
