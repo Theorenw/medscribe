@@ -13,6 +13,11 @@ function App() {
   const [error, setError] = useState('');
   // State for loading animation
   const [loading, setLoading] = useState(false);
+  // States for showing JSON and summary
+  const [showJSON, setShowJSON] = useState(true);
+  const [jsonOutput, setJsonOutput] = useState('');
+  const [summaryOutput, setSummaryOutput] = useState('');
+
   // State to determine is AI returned non medical note
   const [isMedicalOutput, setIsMedicalOutput] = useState(true);
 
@@ -46,14 +51,20 @@ function App() {
       );
       
       // Returned result
-      const resultText = res.data.message || res.data.output;
-      setResult(resultText);
+      const responseText = res.data.message || res.data.output;
+
+      // Json and summary returns
+      const jsonMatch = responseText.match(/\[BEGIN_JSON\]([\s\S]*?)\[END_JSON\]/);
+      const summaryMatch = responseText.match(/\[BEGIN_SUMMARY\]([\s\S]*?)\[END_SUMMARY\]/);
       
-      // Check if note is medical
-      if (resultText.includes('Input does not appear to be a medical or clinical note')) {
-        setIsMedicalOutput(false);
-      } else {
+      if (jsonMatch && summaryMatch) {
+        setJsonOutput(jsonMatch[1].trim());
+        setSummaryOutput(summaryMatch[1].trim());
         setIsMedicalOutput(true);
+      } else {
+        setJsonOutput(responseText);
+        setSummaryOutput('');
+        setIsMedicalOutput(false);
       }
       
       // Clear the input field after submission
@@ -142,7 +153,14 @@ function App() {
         {result && !error && (
           <div className="output-card">
             <h5 className="section-label">Processed Output:</h5>
-            <pre>{result}</pre>
+            {/* Json and summary switch */}
+            {isMedicalOutput && showJSON ? (
+              <pre>{jsonOutput}</pre>
+            ) : (
+              <div className="card p-3 bg-light">
+                <p>{summaryOutput}</p>
+              </div>
+            )}
 
             {isMedicalOutput && (
               <div className="button-row">
@@ -182,6 +200,14 @@ function App() {
                   }}
                 >
                   Copy to Clipboard
+                </button>
+
+                {/* Button to switch output */}
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() => setShowJSON(!showJSON)}
+                >
+                  {showJSON ? 'Switch to Summary View' : 'Switch to JSON View'}
                 </button>
               </div>
             )}

@@ -53,24 +53,24 @@ app.post('/api/generate', upload.single('file'), async (req, res) => {
 
     // Prompt for GPT model
     const prompt = `
-Before generating output, first determine if the provided input is clinical or medical in nature.
+You will be given a raw clinical note. 
+Your task is to:
+1. Output a JSON object following ICD-10-CA/HL7 style standards.
+2. Also provide a short natural-language summary of the note (1-2 paragraphs).
+Separate the two clearly with these markers:
+[BEGIN_JSON]
+...JSON output...
+[END_JSON]
 
-If the input does **NOT** contain medical terminology, patient symptoms, diagnoses, treatment plans, medications, or other clinical language — respond with:
+[BEGIN_SUMMARY]
+...natural summary...
+[END_SUMMARY]
 
-Error: Input does not appear to be a medical or clinical note.
-
-  Otherwise, proceed to generate the structured medical JSON output using the format below.
-    
-You are a medical documentation assistant trained in health informatics. Your job is to take raw, unstructured doctor 
-or nurse notes and convert them into clearly formatted, database-ready records. Structure the output in a standardized 
-JSON format that includes relevant fields like patient information, diagnosis, ICD-10-CA codes, medications, vitals, and 
-treatment plan. The output must be HL7-compliant in style and format. Expand shorthand, clarify abbreviations, and ensure 
-clinical accuracy while preserving the original intent of the note.
-
-Note: "${finalNote}"
-
-Respond English, no extra commentary.
-Important: Do not wrap the output in code blocks or backticks. Return only raw JSON and NO non-whitespace characters.
+Note: If the input does **NOT** contain medical terminology, patient symptoms, diagnoses, treatment plans, 
+medications, or other clinical language, return: "Error: Input does not appear to be a medical or clinical note."
+Important: Do not wrap the json output in code blocks or backticks. Return only raw JSON and NO non-whitespace characters.
+Here is the note:
+${finalNote}
 `;
 
     const completion = await openai.createChatCompletion({
