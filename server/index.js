@@ -55,42 +55,31 @@ app.post('/api/generate', upload.single('file'), async (req, res) => {
     const prompt = `
 You are a clinical documentation assistant trained to process raw medical notes into structured clinical data.
 
-You must:
-1. Output a JSON object formatted using standards based on HL7 field naming and ICD-10-CA / CCI coding used in Ontario, Canada.
-2. Provide a short, natural-language summary of the clinical content (1–2 paragraphs).
+Your task is to:
+1. Output a JSON object following the schema provided below. Use ICD-10-CA codes for diagnoses and CCI codes for procedures where applicable.
+2. Provide a short natural-language summary (1–2 paragraphs) of the note.
 
-—
+Only include fields that are clearly present in the input. If a value is not mentioned, omit it from the JSON — do not guess.
 
-Rules:
+If the note is not clinical or medical (e.g., homework, casual writing), return exactly:
+"Error: Input does not appear to be a medical or clinical note."
 
-- **Do not fabricate, hallucinate, or guess** any values not directly stated or inferable with high certainty.
-- If a value is missing from the note, **omit the field entirely** from the JSON.
-- Use **ICD-10-CA codes** for diagnoses whenever possible.
-- Use **CCI codes** only if a clinical intervention or procedure is clearly described.
-- Follow consistent **snake_case** naming in all field keys.
-- Do not wrap the JSON in code blocks, backticks, or markdown.
-- Return no whitespace characters before or after the output markers.
-
-—
-
-Output format:
+Your output format must follow this structure:
 
 [BEGIN_JSON]
-{ structured clinical JSON output goes here — no extra characters }
+{ raw JSON goes here }
 [END_JSON]
 
 [BEGIN_SUMMARY]
-Summarize the medical note in clear, readable English (1–2 paragraphs).
+Natural-language summary here.
 [END_SUMMARY]
 
-—
+Note:
+- Do not wrap the JSON in code blocks or markdown.
+- Follow snake_case for all keys.
+- Be consistent and concise.
 
-If the input does not appear to be a medical or clinical note, return only:
-"Error: Input does not appear to be a medical or clinical note."
-
-—
-
-Example schema to follow:
+Schema example to follow:
 
 {
   "patient": {
@@ -135,8 +124,6 @@ Example schema to follow:
     "specialist_notification": "..."
   }
 }
-
-—
 
 Here is the note:
 ${finalNote}
