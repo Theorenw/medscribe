@@ -14,6 +14,17 @@ function App() {
   // State for loading animation
   const [loading, setLoading] = useState(false);
 
+  // Example note to show user
+  const fillExampleNote = () => {
+    setNote(`Pt c/o SOB & CP x2d. Hx of HTN, DM2. Lungs: ↓ breath sounds bilat, rales RLL. 
+  BP 160/92, HR 102, T 37.8. SpO2 91% RA. ECG: NSR, no acute ST changes.
+  
+  Dx: CAP ?bacterial. 
+  Tx: Start IV ceftriaxone 1g q24h + azithro 500mg x1 then 250mg PO qd x4d. 
+  O2 via NC @2L/min. Monitor vitals q4h. CBC, BMP, CXR ordered. Reassess tmrw.
+  
+  Plan: Admit to ward. R/O sepsis. Notify ID if no improvement in 48h.`);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,6 +107,7 @@ function App() {
               onChange={(e) => setNote(e.target.value)}
               placeholder="Enter medical note here..."
             ></textarea>
+            <button type="button" className="btn btn-outline-secondary btn-sm mt-2" onClick={fillExampleNote}>Use Example Note</button>
           </div>
 
           {/* File form input */}
