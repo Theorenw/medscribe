@@ -150,7 +150,7 @@ function App() {
         </form>
 
         {/* Output display after processing */}
-        {result && !error && (
+        {(jsonOutput || summaryOutput) && isMedicalOutput && (
           <div className="output-card">
             <h5 className="section-label">Processed Output:</h5>
             {/* Json and summary switch */}
@@ -168,19 +168,13 @@ function App() {
                 <button
                   className="btn btn-success"
                   onClick={() => {
-                    const cleanResult = result
-                      .replace(/```json\n?/, '') // Remove starting ```json
-                      .replace(/```$/, '');      // Remove ending ```
-                    const blob = new Blob(
-                      [JSON.stringify(JSON.parse(cleanResult), null, 2)],
-                      { type: 'application/json' }
-                    );
+                    const blob = new Blob([jsonOutput], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'medscribe_output.json';
-                    a.click();
-                    URL.revokeObjectURL(url);
+
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'medscribe_output.json';
+                    link.click();
                   }}
                 >
                   Download JSON
@@ -190,13 +184,9 @@ function App() {
                 <button
                   className="btn btn-outline-secondary"
                   onClick={() => {
-                    const cleanResult = result
-                      .replace(/```json\n?/, '') // Remove starting ```json
-                      .replace(/```$/, '');      // Remove ending ```
-                    navigator.clipboard.writeText(
-                      JSON.stringify(JSON.parse(cleanResult), null, 2)
-                    );
-                    alert('JSON copied to clipboard');
+                    navigator.clipboard.writeText(jsonOutput)
+                      .then(() => alert('Copied to clipboard!'))
+                      .catch(err => alert('Failed to copy JSON.'));
                   }}
                 >
                   Copy to Clipboard
@@ -204,7 +194,7 @@ function App() {
 
                 {/* Button to switch output */}
                 <button
-                  className="btn btn-outline-primary"
+                  className="btn btn-success"
                   onClick={() => setShowJSON(!showJSON)}
                 >
                   {showJSON ? 'Switch to Summary View' : 'Switch to JSON View'}
