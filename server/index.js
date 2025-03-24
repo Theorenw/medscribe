@@ -53,40 +53,90 @@ app.post('/api/generate', upload.single('file'), async (req, res) => {
 
     // Prompt for GPT model
     const prompt = `
-You are a clinical documentation assistant trained to process medical notes into structured data using ICD-10-CA, HL7, and CCI coding standards used in Ontario, Canada.
+You are a clinical documentation assistant trained to process raw medical notes into structured clinical data.
 
-Your task is to:
-1. Extract relevant data from the note into a JSON object using the structure defined below.
-2. Also generate a short natural-language summary of the note (1–2 paragraphs) for human readability.
+You must:
+1. Output a JSON object formatted using standards based on HL7 field naming and ICD-10-CA / CCI coding used in Ontario, Canada.
+2. Provide a short, natural-language summary of the clinical content (1–2 paragraphs).
 
-The JSON must include:
-- Clinical complaints, past medical history
-- Physical exam findings, vitals, ECG if available
-- Diagnosis with ICD-10-CA codes
-- Treatment details (medications, oxygen therapy, tests ordered)
-- Optional: CCI codes if applicable (e.g., imaging, interventions)
-- Plan and follow-up instructions
+—
 
-Only include fields if mentioned or inferable with high certainty. **Do not fabricate any values.**  
-If any section is missing from the note, **omit the field entirely.**
+Rules:
 
-Strict output format:
+- **Do not fabricate, hallucinate, or guess** any values not directly stated or inferable with high certainty.
+- If a value is missing from the note, **omit the field entirely** from the JSON.
+- Use **ICD-10-CA codes** for diagnoses whenever possible.
+- Use **CCI codes** only if a clinical intervention or procedure is clearly described.
+- Follow consistent **snake_case** naming in all field keys.
+- Do not wrap the JSON in code blocks, backticks, or markdown.
+- Return no whitespace characters before or after the output markers.
+
+—
+
+Output format:
 
 [BEGIN_JSON]
-{ JSON structured output here — raw, no backticks, no extra text }
+{ structured clinical JSON output goes here — no extra characters }
 [END_JSON]
 
 [BEGIN_SUMMARY]
-Natural-language summary of the note (1–2 paragraphs, clear and clinical).
+Summarize the medical note in clear, readable English (1–2 paragraphs).
 [END_SUMMARY]
 
-If the input is not a medical or clinical note (e.g., homework, random text), return:
+—
+
+If the input does not appear to be a medical or clinical note, return only:
 "Error: Input does not appear to be a medical or clinical note."
 
-Important:
-- Do not wrap the JSON in code blocks or markdown.
-- Do not guess values or hallucinate information.
-- Follow the field structure and naming conventions consistently across outputs.
+—
+
+Example schema to follow:
+
+{
+  "patient": {
+    "complaints": ["..."],
+    "history": ["..."]
+  },
+  "physical_exam": {
+    "findings": {
+      "lungs": "...",
+      "heart": "...",
+      "other": "..."
+    },
+    "vitals": {
+      "blood_pressure": "...",
+      "heart_rate": "...",
+      "temperature": "...",
+      "oxygen_saturation": "...",
+      "oxygen_delivery": "..." 
+    },
+    "ecg_findings": "..."
+  },
+  "diagnosis": {
+    "description": "...",
+    "ICD_10_CA": ["..."]
+  },
+  "treatment": {
+    "medications": [
+      {
+        "drug": "...",
+        "dose": "...",
+        "route": "...",
+        "frequency": "..."
+      }
+    ],
+    "oxygen_therapy": "...",
+    "monitoring": "...",
+    "tests_ordered": ["..."]
+  },
+  "plan": {
+    "admission_status": "...",
+    "follow_up": "...",
+    "specialist_notification": "..."
+  }
+}
+
+—
 
 Here is the note:
 ${finalNote}
