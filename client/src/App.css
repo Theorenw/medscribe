@@ -121,14 +121,14 @@ textarea.form-control {
   color: #007b8a !important;
 }
 
-.btn-medscribe {
-  background-color: #004d4d;
+.btn-success {
+  background-color: #004d4d !important;
   color: #fff;
   border: none;
 }
 
-.btn-medscribe:hover {
-  background-color: #003737;
+.btn-success:hover {
+  background-color: #003737 !important;
 }
 
 .custom-accordion .accordion-button {

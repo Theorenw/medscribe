@@ -111,7 +111,7 @@ function App() {
           </div>
           <div className="button-row">
             {/* Form submission buttom */}
-            <button type="submit" className="btn btn-medscribe px-4">Submit</button>
+            <button type="submit" className="btn btn-success">Submit</button>
             {/* Clear output buttom */}
             <button type="button" className="btn btn-outline-secondary" onClick={() => setResult('')}>Clear Output</button>
           </div>
@@ -126,7 +126,7 @@ function App() {
             <div className="button-row">
               {/* Button to download json */}
               <button
-                className="btn btn-medscribe px-4"
+                className="btn btn-success"
                 onClick={() => {
                   const cleanResult = result
                     .replace(/```json\n?/, '') // Remove starting ```json
