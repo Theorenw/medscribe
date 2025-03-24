@@ -84,9 +84,10 @@ If the input is not a medical or clinical note (e.g., homework, random text), re
 "Error: Input does not appear to be a medical or clinical note."
 
 Important:
-- Do not wrap the JSON in code blocks or markdown.
+- Do not wrap the JSON in code blocks, triple backticks or markdown.
 - Do not guess values or hallucinate information.
 - Follow the field structure and naming conventions consistently across outputs.
+- Return the JSON and summary as plain text only, using only the [BEGIN_JSON] and [END_JSON] / [BEGIN_SUMMARY] and [END_SUMMARY] markers.
 
 Here is the note:
 ${finalNote}
