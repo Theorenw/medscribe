@@ -33,6 +33,14 @@ function App() {
   Plan: Admit to ward. R/O sepsis. Notify ID if no improvement in 48h.`);
   };
 
+  // Clears AI response output
+  const clearOutput = () => {
+    setJsonOutput('');
+    setSummaryOutput('');
+    setResult('');
+    setIsMedicalOutput(true);
+  };  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,18 +61,27 @@ function App() {
       // Returned result
       const responseText = res.data.message || res.data.output;
 
-      // Json and summary returns
-      const jsonMatch = responseText.match(/\[BEGIN_JSON\]([\s\S]*?)\[END_JSON\]/);
-      const summaryMatch = responseText.match(/\[BEGIN_SUMMARY\]([\s\S]*?)\[END_SUMMARY\]/);
-      
-      if (jsonMatch && summaryMatch) {
-        setJsonOutput(jsonMatch[1].trim());
-        setSummaryOutput(summaryMatch[1].trim());
-        setIsMedicalOutput(true);
-      } else {
-        setJsonOutput(responseText);
-        setSummaryOutput('');
+      if (responseText.includes("Input does not appear to be a medical or clinical note")) {
         setIsMedicalOutput(false);
+        setResult(responseText);
+        setJsonOutput('');
+        setSummaryOutput('');
+      } else {
+        setIsMedicalOutput(true);
+
+          // Json and summary returns
+          const jsonMatch = responseText.match(/\[BEGIN_JSON\]([\s\S]*?)\[END_JSON\]/);
+          const summaryMatch = responseText.match(/\[BEGIN_SUMMARY\]([\s\S]*?)\[END_SUMMARY\]/);
+          
+          if (jsonMatch && summaryMatch) {
+            setJsonOutput(jsonMatch[1].trim());
+            setSummaryOutput(summaryMatch[1].trim());
+            setIsMedicalOutput(true);
+          } else {
+            setJsonOutput(responseText);
+            setSummaryOutput('');
+            setIsMedicalOutput(false);
+          }
       }
       
       // Clear the input field after submission
@@ -145,7 +162,7 @@ function App() {
             {/* Form submission buttom */}
             <button type="submit" className="btn btn-success">Submit</button>
             {/* Clear output buttom */}
-            <button type="button" className="btn btn-outline-secondary" onClick={() => setResult('')}>Clear Output</button>
+            <button type="button" className="btn btn-outline-secondary" onClick={clearOutput}>Clear Output</button>
           </div>
         </form>
 
@@ -201,6 +218,11 @@ function App() {
                 </button>
               </div>
             )}
+          </div>
+        )}
+        {!isMedicalOutput && (
+          <div className="alert alert-warning mt-4">
+            This does not appear to be a medical or clinical note. Please try again with a medical input.
           </div>
         )}
         {loading && (

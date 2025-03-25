@@ -80,7 +80,7 @@ Strict output format:
 Natural-language summary of the note (1–2 paragraphs, clear and clinical).
 [END_SUMMARY]
 
-If the input is not a medical or clinical note (e.g., homework, random text), return:
+If the note does not clearly contain medical terminology, symptoms, medications, diagnoses, or clinical plans, return:
 "Error: Input does not appear to be a medical or clinical note."
 
 Important:
@@ -89,7 +89,7 @@ Important:
 - Follow the field structure and naming conventions consistently across outputs.
 - Return the JSON and summary as plain text only, using only the [BEGIN_JSON] and [END_JSON] / [BEGIN_SUMMARY] and [END_SUMMARY] markers.
 
-Here is the note:
+Here is the note (shorthand may be used such as 'SOB' for shortness of breath, 'CP' for chest pain, etc.):
 ${finalNote}
 `;
 
