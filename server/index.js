@@ -94,7 +94,7 @@ ${finalNote}
 `;
 
     const completion = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo', // Using gpt-4 final, gpt-3.5-turbo for testing
+      model: 'gpt-4', // Using gpt-4 final, gpt-3.5-turbo for testing
       messages: [
         { role: 'system', content: 'You are a helpful medical coding assistant.' },
         { role: 'user', content: prompt },
